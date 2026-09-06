@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA — AI-Powered Team Productivity Platform (Live MVP Demo)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0B0F19;
+            --bg-sidebar: #111827;
+            --bg-card: #1F2937;
+            --border-color: #374151;
+            --accent-primary: #6366F1;
+            --accent-hover: #4F46E5;
+            --accent-cyan: #06B6D4;
+            --accent-emerald: #10B981;
+            --accent-amber: #F59E0B;
+            --text-main: #F9FAFB;
+            --text-muted: #9CA3AF;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            padding: 20px 16px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 24px;
+        }
+
+        .brand-icon {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-cyan));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--text-main);
+        }
+
+        .nav-item.active {
+            border-left: 3px solid var(--accent-primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .topbar {
+            height: 64px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-sidebar);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+
+        .topbar-title {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-pill {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .workspace-body {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* AI Recommendation Banner */
+        .ai-banner {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(6, 182, 212, 0.2));
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ai-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-size: 15px;
+        }
+
+        .btn-action {
+            background: var(--accent-primary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background: var(--accent-hover);
+        }
+
+        /* Board Columns */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            flex: 1;
+        }
+
+        .kanban-col {
+            background: var(--bg-sidebar);
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .col-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-muted);
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .task-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .task-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-cyan);
+        }
+
+        .task-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .task-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .priority-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .p-high { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+        .p-urgent { background: rgba(239, 68, 68, 0.2); color: #EF4444; }
+        .p-med { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">N</div>
+            <span>NOVA</span>
+        </div>
+        <ul class="nav-list">
+            <li class="nav-item">📊 Dashboard</li>
+            <li class="nav-item active">📁 Projects</li>
+            <li class="nav-item">✅ Tasks</li>
+            <li class="nav-item">👥 Team Members</li>
+            <li class="nav-item">✨ AI Recommendations</li>
+            <li class="nav-item">⚙️ Settings</li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="topbar">
+            <div class="topbar-title">
+                <span>NOVA MVP Development Board</span>
+                <span style="font-size: 12px; background: rgba(99, 102, 241, 0.2); color: var(--accent-cyan); padding: 2px 8px; border-radius: 10px;">Sprint 3</span>
+            </div>
+            <div class="user-pill">
+                <div class="avatar">PM</div>
+                <span style="font-size: 13px; font-weight: 500;">Project Manager</span>
+            </div>
+        </div>
+
+        <div class="workspace-body">
+            <!-- AI Recommendation Banner -->
+            <div class="ai-banner">
+                <div>
+                    <div class="ai-title">✨ NOVA AI Recommendation Engine</div>
+                    <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                        Based on SLA due dates and developer capacity, <strong>US-09: Task API Endpoints</strong> should be prioritized to prevent QA blocking in Sprint 4.
+                    </div>
+                </div>
+                <button class="btn-action" onclick="alert('AI Recommendation Applied! Task priority elevated to Urgent.')">Accept Recommendation</button>
+            </div>
+
+            <!-- Kanban Board -->
+            <div class="kanban-board">
+                <!-- Col 1: To Do -->
+                <div class="kanban-col">
+                    <div class="col-header">
+                        <span>TO DO</span>
+                        <span style="background: rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 10px; font-size: 11px;">3</span>
+                    </div>
+                    <div class="task-card">
+                        <div class="task-title">US-13: Task Comments Engine</div>
+                        <div class="task-meta">
+                            <span class="priority-badge p-med">P1 (Should)</span>
+                            <span>Backend Dev 2</span>
+                        </div>
+                    </div>
+                    <div class="task-card">
+                        <div class="task-title">US-18: Email Alerts Service</div>
+                        <div class="task-meta">
+                            <span class="priority-badge p-med">P1 (Should)</span>
+                            <span>Backend Dev 1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 2: In Progress -->
+                <div class="kanban-col">
+                    <div class="col-header">
+                        <span>IN PROGRESS</span>
+                        <span style="background: rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 10px; font-size: 11px;">2</span>
+                    </div>
+                    <div class="task-card" style="border-left: 3px solid var(--accent-amber);">
+                        <div class="task-title">US-09: Task Creation APIs</div>
+                        <div class="task-meta">
+                            <span class="priority-badge p-urgent">P0 (Must)</span>
+                            <span>Backend Dev 1</span>
+                        </div>
+                    </div>
+                    <div class="task-card" style="border-left: 3px solid var(--accent-cyan);">
+                        <div class="task-title">US-12: Drag & Drop Kanban UI</div>
+                        <div class="task-meta">
+                            <span class="priority-badge p-high">P0 (Must)</span>
+                            <span>Front-End Dev 2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 3: Under Review -->
+                <div class="kanban-col">
+                    <div class="col-header">
+                        <span>IN REVIEW</span>
+                        <span style="background: rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 10px; font-size: 11px;">1</span>
+                    </div>
+                    <div class="task-card">
+                        <div class="task-title">US-11: Priority & Due Date Picker</div>
+                        <div class="task-meta">
+                            <span class="priority-badge p-high">P0 (Must)</span>
+                            <span>Flutter Dev 2</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 4: Done -->
+                <div class="kanban-col">
+                    <div class="col-header">
+                        <span>DONE</span>
+                        <span style="background: rgba(255, 255, 255, 0.1); padding: 2px 8px; border-radius: 10px; font-size: 11px;">4</span>
+                    </div>
+                    <div class="task-card" style="opacity: 0.8;">
+                        <div class="task-title">US-01: JWT Authentication API</div>
+                        <div class="task-meta">
+                            <span class="priority-badge p-emerald">Completed</span>
+                            <span>Backend Dev 1</span>
+                        </div>
+                    </div>
+                    <div class="task-card" style="opacity: 0.8;">
+                        <div class="task-title">US-05: Project Creation Workspace</div>
+                        <div class="task-meta">
+                            <span class="priority-badge p-emerald">Completed</span>
+                            <span>Backend Dev 2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

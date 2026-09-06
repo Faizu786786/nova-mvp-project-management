@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOVA MVP — PM Executive Project Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0F172A;
+            --bg-secondary: #1E293B;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-blue: #38BDF8;
+            --accent-purple: #818CF8;
+            --accent-green: #34D399;
+            --accent-yellow: #FBBF24;
+            --accent-red: #F87171;
+            --text-primary: #F8FAFC;
+            --text-secondary: #94A3B8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 20px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+
+        .title-area h1 {
+            font-size: 22px;
+            font-weight: 700;
+        }
+
+        .title-area p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(52, 211, 153, 0.15);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            color: var(--accent-green);
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-green);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--accent-green);
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--accent-blue);
+        }
+
+        .kpi-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .kpi-subtext {
+            font-size: 12px;
+            color: var(--accent-green);
+            margin-top: 4px;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .progress-bar-container {
+            margin-bottom: 16px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+
+        .progress-bar-outer {
+            width: 100%;
+            height: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 6px;
+            transition: width 0.5s ease;
+        }
+
+        .sprint-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .sprint-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-done { background: rgba(52, 211, 153, 0.2); color: var(--accent-green); }
+        .badge-progress { background: rgba(56, 189, 248, 0.2); color: var(--accent-blue); }
+        .badge-planned { background: rgba(148, 163, 184, 0.2); color: var(--text-secondary); }
+        .badge-critical { background: rgba(248, 113, 113, 0.2); color: var(--accent-red); }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        th {
+            text-align: left;
+            padding: 10px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .tab-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--accent-blue);
+            color: #0F172A;
+            font-weight: 600;
+            border-color: var(--accent-blue);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="brand">
+            <div class="logo-icon">N</div>
+            <div class="title-area">
+                <h1>NOVA MVP — PM Executive Dashboard</h1>
+                <p>Week 4 Progress Snapshot | Target Release: Week 10</p>
+            </div>
+        </div>
+        <div class="status-badge">
+            <div class="dot"></div> OVERALL STATUS: ON TRACK
+        </div>
+    </div>
+
+    <!-- KPI Grid -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <div class="kpi-label">Overall Completion</div>
+            <div class="kpi-value">42%</div>
+            <div class="progress-bar-outer" style="margin-top: 10px;">
+                <div class="progress-bar-inner" style="width: 42%;"></div>
+            </div>
+            <div class="kpi-subtext">On track for Week 10 release</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Sprint 2 Velocity</div>
+            <div class="kpi-value">28 <span style="font-size: 14px; font-weight: 400; color: var(--text-secondary);">pts</span></div>
+            <div class="kpi-subtext">+12% vs Sprint 1 baseline</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Completed Tasks</div>
+            <div class="kpi-value" style="color: var(--accent-green);">86</div>
+            <div class="kpi-subtext">Out of 110 planned tasks</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">Open / Blocked Tasks</div>
+            <div class="kpi-value" style="color: var(--accent-yellow);">24 <span style="font-size: 14px; color: var(--accent-red);">(4 Blocked)</span></div>
+            <div class="kpi-subtext">API dependencies actively tracked</div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-label">EVM Schedule Performance Index</div>
+            <div class="kpi-value" style="color: var(--accent-blue);">1.05</div>
+            <div class="kpi-subtext">SPI > 1.0 (Ahead of schedule)</div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <div class="left-column">
+            <!-- Sprint Progress -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">Agile Sprint Breakdown (5 Sprints)</div>
+                    <a href="nova_app_demo.html" style="color: var(--accent-blue); text-decoration: none; font-size: 13px; font-weight: 500;">View Live Product Mockup &rarr;</a>
+                </div>
+                <div class="sprint-list">
+                    <div class="sprint-item">
+                        <div>
+                            <strong>Sprint 1: Foundation & Authentication</strong>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Weeks 1-2 | Auth APIs, DB Schemas, Figma UI Kit</div>
+                        </div>
+                        <span class="badge badge-done">100% Completed (25 Pts)</span>
+                    </div>
+                    <div class="sprint-item">
+                        <div>
+                            <strong>Sprint 2: Workspace & Team Management</strong>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Weeks 3-4 | Project CRUD, RBAC, Member Invites</div>
+                        </div>
+                        <span class="badge badge-done">100% Completed (28 Pts)</span>
+                    </div>
+                    <div class="sprint-item" style="border-left: 3px solid var(--accent-blue);">
+                        <div>
+                            <strong>Sprint 3: Task Management & Kanban Engine</strong>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Weeks 5-6 | Tasks, Statuses, Drag-and-Drop, Comments</div>
+                        </div>
+                        <span class="badge badge-progress">In Progress (55%)</span>
+                    </div>
+                    <div class="sprint-item">
+                        <div>
+                            <strong>Sprint 4: Executive Dashboard & AI Engine</strong>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Weeks 7-8 | KPIs, Notifications, Rule-Based AI Rules</div>
+                        </div>
+                        <span class="badge badge-planned">Scheduled</span>
+                    </div>
+                    <div class="sprint-item">
+                        <div>
+                            <strong>Sprint 5: QA Hardening, UAT & Launch</strong>
+                            <div style="font-size: 12px; color: var(--text-secondary);">Weeks 9-10 | E2E Testing, 10 UAT Scenarios, Deployment</div>
+                        </div>
+                        <span class="badge badge-planned">Scheduled</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Blockers & Daily Tracker -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">Daily Execution Tracker & Active Blockers</div>
+                    <div class="filter-tabs">
+                        <button class="tab-btn active" onclick="filterTable('all')">All</button>
+                        <button class="tab-btn" onclick="filterTable('blocked')">Blocked (4)</button>
+                        <button class="tab-btn" onclick="filterTable('progress')">In Progress</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Task Name</th>
+                            <th>Owner</th>
+                            <th>Status</th>
+                            <th>Blocker Description</th>
+                            <th>Next Action SLA</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tracker-body">
+                        <tr class="row-blocked">
+                            <td>Task API Endpoints</td>
+                            <td>Backend Dev 1</td>
+                            <td><span class="badge badge-critical">Blocked</span></td>
+                            <td>Waiting on DB migration review</td>
+                            <td>Pair with Lead by 3 PM</td>
+                        </tr>
+                        <tr class="row-progress">
+                            <td>Kanban UI Drag & Drop</td>
+                            <td>Front-End Dev 2</td>
+                            <td><span class="badge badge-progress">In Progress</span></td>
+                            <td>—</td>
+                            <td>Complete touch events by EOD</td>
+                        </tr>
+                        <tr class="row-progress">
+                            <td>Mobile Task List View</td>
+                            <td>Flutter Dev 1</td>
+                            <td><span class="badge badge-progress">In Progress</span></td>
+                            <td>Syncing API payload format</td>
+                            <td>Review OpenAPI spec at 4 PM</td>
+                        </tr>
+                        <tr class="row-blocked">
+                            <td>Task Comment Real-time Sync</td>
+                            <td>Backend Dev 2</td>
+                            <td><span class="badge badge-critical">Blocked</span></td>
+                            <td>Redis PubSub connection issue</td>
+                            <td>DevOps checking firewall rules</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <!-- Risk Matrix Summary -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">Top Risk Heatmap</div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <div style="padding: 10px; background: rgba(248, 113, 113, 0.1); border-left: 3px solid var(--accent-red); border-radius: 6px;">
+                        <strong style="color: var(--accent-red); font-size: 13px;">R-01: API Delivery Delay</strong>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Severity: 16 (Critical) | Mitigation: Mock JSON stubs deployed.</p>
+                    </div>
+                    <div style="padding: 10px; background: rgba(251, 191, 36, 0.1); border-left: 3px solid var(--accent-yellow); border-radius: 6px;">
+                        <strong style="color: var(--accent-yellow); font-size: 13px;">R-02: Week 6 AI Scope Change</strong>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Severity: 12 (High) | Mitigation: Phase 1 heuristic scope swap proposed.</p>
+                    </div>
+                    <div style="padding: 10px; background: rgba(251, 191, 36, 0.1); border-left: 3px solid var(--accent-yellow); border-radius: 6px;">
+                        <strong style="color: var(--accent-yellow); font-size: 13px;">R-03: Sprint 5 QA Bottleneck</strong>
+                        <p style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Severity: 12 (High) | Mitigation: Dev automated tests enforced.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Team Capacity & Roles -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div class="panel-title">Team Allocation (10 Roles)</div>
+                </div>
+                <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.6;">
+                    • <strong>1 PM Intern</strong> (Lead Author)<br>
+                    • <strong>1 Product Manager</strong> (Accountable)<br>
+                    • <strong>1 UI/UX Designer</strong> (Design System)<br>
+                    • <strong>2 Flutter Devs</strong> (Mobile Apps)<br>
+                    • <strong>2 Front-End Devs</strong> (Web App)<br>
+                    • <strong>2 Backend Devs</strong> (REST APIs)<br>
+                    • <strong>1 QA Engineer</strong> (Automation)<br>
+                    • <strong>1 DevOps Eng</strong> (AWS Infrastructure)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterTable(filter) {
+            const btns = document.querySelectorAll('.tab-btn');
+            btns.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            const rows = document.querySelectorAll('#tracker-body tr');
+            rows.forEach(r => {
+                if (filter === 'all') {
+                    r.style.display = '';
+                } else if (filter === 'blocked') {
+                    r.style.display = r.classList.contains('row-blocked') ? '' : 'none';
+                } else if (filter === 'progress') {
+                    r.style.display = r.classList.contains('row-progress') ? '' : 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
